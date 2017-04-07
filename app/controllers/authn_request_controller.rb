@@ -16,7 +16,10 @@ class AuthnRequestController < SamlController
     if params['journey_hint'].present?
       redirect_to confirm_your_identity_path
     elsif params['eidas_journey'].present?
-      raise StandardError, 'Users session does not support eIDAS journeys' unless response.transaction_supports_eidas
+      unless response.transaction_supports_eidas
+        something_went_wrong('European eID journey is not available', :forbidden)
+        return
+      end
       redirect_to choose_a_country_path
     else
       redirect_to start_path
@@ -24,6 +27,11 @@ class AuthnRequestController < SamlController
   end
 
 private
+
+  def something_went_wrong(exception, status = :internal_server_error)
+    logger.error(exception)
+    render_error('something_went_wrong', status)
+  end
 
   def set_session_start_time!
     session[:start_time] = DateTime.now.to_i * 1000
