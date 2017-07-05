@@ -175,9 +175,9 @@ describe SessionProxy do
       response = session_proxy.idp_authn_response(session_id, 'saml-response', 'relay-state')
 
       attributes = {
-        idp_result: 'some-location',
-        is_registration: false,
-        loa_achieved: 'LEVEL_2'
+          idp_result: 'some-location',
+          is_registration: false,
+          loa_achieved: 'LEVEL_2'
       }
       expect(response).to have_attributes(attributes)
     end
